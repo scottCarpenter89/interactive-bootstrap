@@ -89,7 +89,8 @@ document.querySelector('#saveNewPokemon').addEventListener('click', (e) => {
                 </div>
             </div>`;
 
-    window.localStorage.setItem(`pokemon${number}`, JSON.stringify(pokemon));
+    pokemonArray.push(pokemon);
+    window.localStorage.setItem("pokemon", JSON.stringify(pokemonArray));
     document.querySelector('.row').insertAdjacentHTML("beforeend", newCard);
     document.querySelector('#addPokemonForm').reset();
 });
