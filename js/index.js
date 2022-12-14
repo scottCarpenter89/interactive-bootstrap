@@ -101,8 +101,11 @@ document.addEventListener('DOMContentLoaded', event => {
 
     const loadCards = JSON.parse(localStorage.getItem('pokemon'));
 
-    loadCards.forEach(pokemon => {
-        const card = `<!-- New Pokemon -->
+    if (localStorage.getItem("pokemon") === null) {
+        return;
+    } else {
+        loadCards.forEach(pokemon => {
+            const card = `<!-- New Pokemon -->
         <div id="${pokemon.name}-card" class="col-md-6 col-lg-3 col-xxl-2">
             <div class="card container mb-4" style="width: 18rem;">
                 <div class="pokemon-name-number d-flex justify-content-between mt-2">
@@ -160,52 +163,78 @@ document.addEventListener('DOMContentLoaded', event => {
             </div>
         </div>`;
 
-        document.querySelector('.row').insertAdjacentHTML("beforeend", card);
-        
-        document.querySelector(`#release-${pokemon.name}`).addEventListener('click', e => {
-            e.preventDefault();
-            console.log(loadCards);
-            document.querySelector("#confirm-body").innerHTML= `<p>Are you sure you want to release ${pokemon.name} back into the wild? </p>`
-            
-            document.querySelector('#release').addEventListener('click', e => {
-                let releasePokemon = document.querySelector(`#${pokemon.name}-card`);
-                let pokemonName = `${pokemon.name}`;
-                releasePokemon.remove();
-                for (let i = 0; i < loadCards.length; i++) {
-                    if (loadCards[i].name === pokemonName) {
-                        loadCards.splice(loadCards[i], 1);
-                        console.log(loadCards);
-                        window.localStorage.setItem("pokemon", JSON.stringify(loadCards));
+            document.querySelector('.row').insertAdjacentHTML("beforeend", card);
+
+            document.querySelector(`#release-${pokemon.name}`).addEventListener('click', e => {
+                e.preventDefault();
+
+                document.querySelector("#confirm-body").innerHTML = `<p>Are you sure you want to release ${pokemon.name} back into the wild? </p>`
+
+                document.querySelector('#release').addEventListener('click', e => {
+                    let releasePokemon = document.querySelector(`#${pokemon.name}-card`);
+                    let pokemonName = `${pokemon.name}`;
+                    releasePokemon.remove();
+                    for (let i = 0; i < loadCards.length; i++) {
+                        if (loadCards[i].name === pokemonName) {
+                            loadCards.splice(loadCards[i], 1);
+                            console.log(loadCards);
+                            window.localStorage.setItem("pokemon", JSON.stringify(loadCards));
+                        }
+                    }
+                });
+            });
+
+            document.querySelector(`#update-${pokemon.name}`).addEventListener('click', e => {
+                e.preventDefault();
+                let data = localStorage.getItem("pokemon");
+
+                let updateName = `${pokemon.name}`;
+                let updateNumber = `${pokemon.number}`;
+                let updateFeet = `${pokemon.feet}`;
+                let updateInches = `${pokemon.inches}`;
+                let updateWeight = `${pokemon.weight}`;
+                let updateDescription = `${pokemon.description}`;
+
+                let form = document.getElementById("updatePokemonForm");
+                let inputs = form.getElementsByClassName("form-check-input");
+                let typeArray = [];
+
+                for (let i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type === "checkbox" && inputs[i].checked) {
+                        typeArray.push(inputs[i].value);
                     }
                 }
+                let types = typeArray.join(', ');
+
+
+                const updateNameField = document.querySelector('#update-pokemon-name');
+                const updateNumberField = document.querySelector('#update-pokemon-number');
+                const updateFeetField = document.querySelector('#update-pokemon-feet');
+                const updateInchesField = document.querySelector('#update-pokemon-inches');
+                const updateWeightField = document.querySelector('#update-pokemon-weight');
+                const updateDescriptionField = document.querySelector('#update-pokemon-description');
+
+                updateNameField.setAttribute("value", updateName);
+                updateNumberField.setAttribute("value", updateNumber);
+                updateFeetField.setAttribute("value", updateFeet);
+                updateInchesField.setAttribute("value", updateInches);
+                updateWeightField.setAttribute("value", updateWeight);
+                updateDescriptionField.innerText = updateDescription;
+
+
+                document.querySelector('#update-pokemon').addEventListener('click', e => {
+                    let updateLocalStorage = {
+                        name: updateNameField.value,
+                        number: updateNumberField.value,
+                        feet: updateFeetField.value,
+                        inches: updateInchesField.value,
+                        weight: updateWeightField.value,
+                        description: updateDescriptionField.value
+                    }
+                    pokemonArray.push(updateLocalStorage)
+                    window.localStorage.setItem("pokemon", JSON.stringify(pokemonArray));
+                })
             });
-            
         });
-
-        document.querySelector(`#update-${pokemon.name}`).addEventListener('click', e => {
-            e.preventDefault();
-            let data = JSON.parse(localStorage.getItem(`pokemon${pokemon.number}`));
-
-            let form = document.getElementById("updatePokemonForm");
-            let inputs = form.getElementsByClassName("form-check-input");
-            let typeArray = [];
-
-            for (let i = 0; i < inputs.length; i++) {
-                if (inputs[i].type === "checkbox" && inputs[i].checked) {
-                    typeArray.push(inputs[i].value);
-                }
-            }
-            let types = typeArray.join(', ');
-            document.querySelector('#update-pokemon-name').setAttribute('value', `${data.name}`);
-            document.querySelector('#update-pokemon-number').setAttribute('value', `${data.number}`);
-            document.querySelector('#update-pokemon-feet').setAttribute('value', `${data.feet}`);
-            document.querySelector('#update-pokemon-inches').setAttribute('value', `${data.inches}`);
-            document.querySelector('#update-pokemon-weight').setAttribute('value', `${data.weight}`);
-            document.querySelector('#update-pokemon-description').innerText = `${data.description}`;
-
-            let localKey = localStorage.getItem(`pokemon${data.number}`);
-             localKey = localStorage.setItem(`pokemon${data.number}`, JSON.stringify(updatePokemon));
-         
-        });
-    });
+    }
 });
