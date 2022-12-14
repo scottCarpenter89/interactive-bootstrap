@@ -154,28 +154,32 @@ document.addEventListener('DOMContentLoaded', event => {
                 <div class="container mb-3 d-flex justify-content-end">
                         <button id="update-${pokemon.name}" type="button" class="btn btn-warning" data-bs-toggle="modal"
                             data-bs-target="#updateModal">Update</button>
-                        <button id="release-${pokemon.name}" class="release btn btn-success ms-2">Release</button>
+                        <button id="release-${pokemon.name}" class="release btn btn-success ms-2"  data-bs-toggle="modal"
+                        data-bs-target="#confirm-release" card-id="${pokemon.number}">Release</button>
                     </div>
             </div>
         </div>`;
 
         document.querySelector('.row').insertAdjacentHTML("beforeend", card);
-
+        
         document.querySelector(`#release-${pokemon.name}`).addEventListener('click', e => {
             e.preventDefault();
             console.log(loadCards);
-            let releasePokemon = document.querySelector(`#${pokemon.name}-card`);
-            let pokemonName = `${pokemon.name}`;
-            releasePokemon.remove();
-        
-            for (let i = 0; i < loadCards.length; i++) {
-                if (loadCards[i].name === pokemonName) {
-                    loadCards.splice(loadCards[i], 1);
-                    console.log(loadCards);
-                    window.localStorage.setItem("pokemon", JSON.stringify(loadCards));
+            document.querySelector("#confirm-body").innerHTML= `<p>Are you sure you want to release ${pokemon.name} back into the wild? </p>`
+            
+            document.querySelector('#release').addEventListener('click', e => {
+                let releasePokemon = document.querySelector(`#${pokemon.name}-card`);
+                let pokemonName = `${pokemon.name}`;
+                releasePokemon.remove();
+                for (let i = 0; i < loadCards.length; i++) {
+                    if (loadCards[i].name === pokemonName) {
+                        loadCards.splice(loadCards[i], 1);
+                        console.log(loadCards);
+                        window.localStorage.setItem("pokemon", JSON.stringify(loadCards));
+                    }
                 }
-            }
-        
+            });
+            
         });
 
         document.querySelector(`#update-${pokemon.name}`).addEventListener('click', e => {
