@@ -99,12 +99,9 @@ document.querySelector('#saveNewPokemon').addEventListener('click', (e) => {
 document.addEventListener('DOMContentLoaded', event => {
     event.preventDefault();
 
+    const loadCards = JSON.parse(localStorage.getItem('pokemon'));
 
-    for (let i = 0; i < localStorage.length; i++) {
-        pokemonArray.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
-    }
-
-    pokemonArray.forEach(pokemon => {
+    loadCards.forEach(pokemon => {
         const card = `<!-- New Pokemon -->
         <div id="${pokemon.name}-card" class="col-md-6 col-lg-3 col-xxl-2">
             <div class="card container mb-4" style="width: 18rem;">
@@ -166,10 +163,19 @@ document.addEventListener('DOMContentLoaded', event => {
 
         document.querySelector(`#release-${pokemon.name}`).addEventListener('click', e => {
             e.preventDefault();
-
+            console.log(loadCards);
             let releasePokemon = document.querySelector(`#${pokemon.name}-card`);
+            let pokemonName = `${pokemon.name}`;
             releasePokemon.remove();
-            localStorage.removeItem(`pokemon${pokemon.number}`);
+        
+            for (let i = 0; i < loadCards.length; i++) {
+                if (loadCards[i].name === pokemonName) {
+                    loadCards.splice(loadCards[i], 1);
+                    console.log(loadCards);
+                    window.localStorage.setItem("pokemon", JSON.stringify(loadCards));
+                }
+            }
+        
         });
 
         document.querySelector(`#update-${pokemon.name}`).addEventListener('click', e => {
